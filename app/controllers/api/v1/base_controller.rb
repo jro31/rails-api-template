@@ -14,6 +14,8 @@ module Api
 
       private
 
+      attr_reader :skip_after_action
+
       def user_not_authorized(exception)
         render json: {
           error_message: "Unauthorized #{exception.policy.class.to_s.underscore.camelize}.#{exception.query}"
@@ -22,11 +24,6 @@ module Api
 
       def not_found(exception)
         render json: { error_message: exception.message }, status: :not_found
-      end
-
-      # Set '@skip_after_action' to true in rescue blocks which can be called before authorization has been run
-      def skip_after_action
-        @skip_after_action
       end
     end
   end
