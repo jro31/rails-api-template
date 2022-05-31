@@ -6,25 +6,23 @@ module Api
 
       # POST /api/v1/registrations
       def create
-        begin
-          raise 'Password confirmation not included' unless params['user']['password_confirmation']
+        raise 'Password confirmation not included' unless params['user']['password_confirmation']
 
-          user = User.create!(user_params)
+        user = User.create!(user_params)
 
-          session[:user_id] = user.id
-          render json: {
-            logged_in: true,
-            user: UserRepresenter.new(user).as_json
-          }, status: :created
-        rescue ActiveRecord::RecordInvalid => e
-          render json: {
-            error_message: e.message.split(':')&.last&.strip || 'Something went wrong'
-          }, status: :unprocessable_entity
-        rescue => e
-          render json: {
-            error_message: e.message
-          }, status: :unprocessable_entity
-        end
+        session[:user_id] = user.id
+        render json: {
+          logged_in: true,
+          user: UserRepresenter.new(user).as_json
+        }, status: :created
+      rescue ActiveRecord::RecordInvalid => e
+        render json: {
+          error_message: e.message.split(':')&.last&.strip || 'Something went wrong'
+        }, status: :unprocessable_entity
+      rescue StandardError => e
+        render json: {
+          error_message: e.message
+        }, status: :unprocessable_entity
       end
 
       private
